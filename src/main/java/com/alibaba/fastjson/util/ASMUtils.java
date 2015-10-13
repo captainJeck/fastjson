@@ -12,16 +12,22 @@ import com.alibaba.fastjson.parser.deserializer.ObjectDeserializer;
 
 public class ASMUtils {
 
+    public static final String JAVA_VM_NAME = System.getProperty("java.vm.name");
+	
     public static boolean isAndroid(String vmName) {
+        if (vmName == null) { // default is false
+            return false;
+        }
+        
         String lowerVMName = vmName.toLowerCase();
-
+        
         return lowerVMName.contains("dalvik") //
                || lowerVMName.contains("lemur") // aliyun-vm name
         ;
     }
 
     public static boolean isAndroid() {
-        return isAndroid(System.getProperty("java.vm.name"));
+        return isAndroid(JAVA_VM_NAME);
     }
 
     public static String getDesc(Method method) {
@@ -129,5 +135,16 @@ public class ASMUtils {
             }
         }
         parser.accept(JSONToken.RBRACKET, JSONToken.COMMA);
+    }
+    
+    public static boolean checkName(String name) {
+        for (int i = 0; i < name.length(); ++i) {
+            char c = name.charAt(i);
+            if (c < '\001' || c > '\177') {
+                return false;
+            }
+        }
+        
+        return true;
     }
 }
